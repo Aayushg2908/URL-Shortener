@@ -11,8 +11,7 @@ model Project {
   id     String   @id @default(auto()) @map("_id") @db.ObjectId
   userId String
   name   String
-  logo   String
-  clicks String[]
+  clicks String[] @default([])
 
   links Link[]
 
@@ -24,7 +23,7 @@ model Link {
   id           String @id @default(auto()) @map("_id") @db.ObjectId
   userId       String
   longUrl      String
-  shortUrlSlug String
+  shortUrlSlug String @unique
 
   projectId String  @db.ObjectId
   project   Project @relation(fields: [projectId], references: [id])
