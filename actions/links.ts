@@ -14,7 +14,7 @@ export const createLink = async (
     return redirect("/sign-in");
   }
 
-  const shortUrlSlugExists = await db.link.findFirst({
+  const shortUrlSlugExists = await db.link.findUnique({
     where: {
       shortUrlSlug: values.shortUrlSlug,
     },

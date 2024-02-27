@@ -47,16 +47,17 @@ const LinkModal = () => {
           toast.error("Slug already exists");
         } else {
           toast.success("Link created successfully");
+          onClose();
+          form.reset();
         }
       } else {
         toast.success("Link updated successfully");
       }
     } catch (error) {
       toast.error("Something went wrong");
+      onClose();
     } finally {
       setIsLoading(false);
-      onClose();
-      form.reset();
     }
   }
 
