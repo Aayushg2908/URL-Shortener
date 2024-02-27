@@ -38,3 +38,22 @@ export const getAllProjects = async () => {
 
   return projects;
 };
+
+export const getProjectById = async (projectId: string) => {
+  const { userId } = auth();
+  if (!userId) {
+    return redirect("/sign-in");
+  }
+
+  const project = await db.project.findFirst({
+    where: {
+      id: projectId,
+      userId,
+    },
+    include: {
+      links: true,
+    },
+  });
+
+  return project;
+};

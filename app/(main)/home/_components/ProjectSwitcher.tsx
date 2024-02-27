@@ -43,7 +43,7 @@ const ProjectSwitcher = ({ projects }: ProjectSwitcherProps) => {
 
   const onStoreSelect = (project: { value: string; label: string }) => {
     setOpen(false);
-    router.push(`/${project.value}`);
+    router.push(`/home/${project.value}`);
   };
 
   return (

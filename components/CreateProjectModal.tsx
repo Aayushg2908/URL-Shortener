@@ -45,6 +45,7 @@ const CreateProjectModal = () => {
     } finally {
       setIsLoading(false);
       onClose();
+      form.reset();
     }
   }
 

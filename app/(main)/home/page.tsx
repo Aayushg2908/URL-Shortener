@@ -23,7 +23,7 @@ const HomePage = async () => {
       {projects.length > 0 ? (
         <div className="mt-10 flex flex-col items-center sm:flex-row sm:flex-wrap gap-4 max-w-5xl mx-auto px-2">
           {projects.map((project) => (
-            <Link href={project.id} key={project.id}>
+            <Link href={`/home/${project.id}`} key={project.id}>
               <Card className="cursor-pointer hover:shadow-gray-500 hover:shadow-lg transition-all duration-400 w-[250px] border border-gray-500">
                 <CardHeader>
                   <CardTitle>{project.name}</CardTitle>
