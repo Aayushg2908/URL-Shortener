@@ -65,3 +65,43 @@ export const getProjectById = async (projectId: string) => {
 
   return project;
 };
+
+export const updateProject = async (
+  projectId: string,
+  values: { name: string }
+) => {
+  const { userId } = auth();
+  if (!userId) {
+    return redirect("/sign-in");
+  }
+
+  await db.project.update({
+    where: {
+      id: projectId,
+      userId,
+    },
+    data: {
+      name: values.name,
+    },
+  });
+
+  revalidatePath(`/home/${projectId}/settings`);
+  revalidatePath(`/home/${projectId}`);
+  revalidatePath("/home");
+};
+
+export const deleteProject = async (projectId: string) => {
+  const { userId } = auth();
+  if (!userId) {
+    return redirect("/sign-in");
+  }
+
+  await db.project.delete({
+    where: {
+      id: projectId,
+      userId,
+    },
+  });
+
+  revalidatePath("/home");
+};
