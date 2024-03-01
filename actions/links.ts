@@ -102,3 +102,27 @@ export const updateLink = async (
     status: 200,
   };
 };
+
+export const handleRedirect = async (domain: string) => {
+  const link = await db.link.findUnique({
+    where: {
+      shortUrlSlug: domain,
+    },
+  });
+  if (!link) {
+    return null;
+  }
+
+  await db.link.update({
+    where: {
+      shortUrlSlug: domain,
+    },
+    data: {
+      clicks: {
+        increment: 1,
+      },
+    },
+  });
+
+  return link.longUrl;
+};
