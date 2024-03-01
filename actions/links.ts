@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { redis } from "@/lib/redis";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -48,12 +49,14 @@ export const deleteLink = async (linkId: string, projectId: string) => {
     return redirect("/sign-in");
   }
 
-  await db.link.delete({
+  const link = await db.link.delete({
     where: {
       userId,
       id: linkId,
     },
   });
+
+  redis.del(`link:${link.shortUrlSlug}`);
 
   revalidatePath(`/home`);
   revalidatePath(`/home/${projectId}`);
@@ -83,7 +86,19 @@ export const updateLink = async (
     };
   }
 
-  const link = await db.link.update({
+  const link = await db.link.findUnique({
+    where: {
+      id: linkId,
+      userId,
+    },
+  });
+  if (!link) {
+    throw new Error("Link not found");
+  }
+
+  redis.del(`link:${link.shortUrlSlug}`);
+
+  await db.link.update({
     where: {
       id: linkId,
       userId,
@@ -104,6 +119,11 @@ export const updateLink = async (
 };
 
 export const handleRedirect = async (domain: string) => {
+  const redisLink = await redis.get(`link:${domain}`);
+  if (redisLink) {
+    return redisLink;
+  }
+
   const link = await db.link.findUnique({
     where: {
       shortUrlSlug: domain,
@@ -123,6 +143,10 @@ export const handleRedirect = async (domain: string) => {
       },
     },
   });
+
+  if (link.clicks > 5) {
+    redis.set(`link:${domain}`, link.longUrl);
+  }
 
   return link.longUrl;
 };
