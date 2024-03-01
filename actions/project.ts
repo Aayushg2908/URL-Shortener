@@ -32,7 +32,11 @@ export const getAllProjects = async () => {
       userId,
     },
     include: {
-      links: true,
+      links: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
   });
 
@@ -51,7 +55,11 @@ export const getProjectById = async (projectId: string) => {
       userId,
     },
     include: {
-      links: true,
+      links: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
   });
 

@@ -8,10 +8,9 @@ datasource db {
 }
 
 model Project {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String
   name   String
-  clicks String[] @default([])
 
   links Link[]
 
@@ -24,6 +23,7 @@ model Link {
   userId       String
   longUrl      String
   shortUrlSlug String @unique
+  clicks       Int    @default(0)
 
   projectId String  @db.ObjectId
   project   Project @relation(fields: [projectId], references: [id])

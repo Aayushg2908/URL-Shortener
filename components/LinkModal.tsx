@@ -16,10 +16,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
-import { createLink } from "@/actions/links";
+import { createLink, updateLink } from "@/actions/links";
 
 const linkSchema = z.object({
   longUrl: z.string().url(),
@@ -38,6 +38,15 @@ const LinkModal = () => {
     },
   });
 
+  useEffect(() => {
+    if (link) {
+      form.reset({
+        longUrl: link.longUrl,
+        shortUrlSlug: link.shortUrlSlug,
+      });
+    }
+  }, [link]);
+
   async function onSubmit(values: z.infer<typeof linkSchema>) {
     try {
       setIsLoading(true);
@@ -51,7 +60,15 @@ const LinkModal = () => {
           form.reset();
         }
       } else {
-        toast.success("Link updated successfully");
+        if (!link) return;
+        const data = await updateLink(link.id, projectId, values);
+        if (data.status === 400) {
+          toast.error("Slug already exists");
+        } else {
+          toast.success("Link updated successfully");
+          onClose();
+          form.reset();
+        }
       }
     } catch (error) {
       toast.error("Something went wrong");
